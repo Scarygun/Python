@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 # Bot tokeni
-BOT_TOKEN = "7646311191:AAFSQrbFcu5puH--m-TJekKSEGRzQs1dAWM"
+BOT_TOKEN = "API_TOKEN"
 
 # Bot va dispatcherni inicializatsiya qilish
 bot = Bot(token=BOT_TOKEN)

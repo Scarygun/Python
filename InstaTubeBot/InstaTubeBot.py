@@ -1,7 +1,6 @@
 import logging
 import os
 import mimetypes
-import re
 import asyncio
 import yt_dlp
 from aiogram import Bot, Dispatcher, F
@@ -75,12 +74,17 @@ def download_media(url, platform, quality="360p", media_type="video"):
             if media_type == "mp3":
                 file_path = file_path.rsplit('.', 1)[0] + '.mp3'
             
-            return file_path if os.path.exists(file_path) else None
+            if os.path.exists(file_path):
+                logger.info(f"Fayl muvaffaqiyatli yuklandi: {file_path}")
+                return file_path
+            else:
+                logger.error(f"Faylni topish imkoniyati yo'q: {file_path}")
+                return None
     except Exception as e:
         logger.error(f"Yuklab olishda xato: {e}")
         return None
-
-# Katta fayllarni kichik qismlarga ajratish funksiyasi
+    
+# Katta fayllarni qismlarga ajratish funksiyasi
 def split_file(file_path, chunk_size=49 * 1024 * 1024):  # 49MB
     file_size = os.path.getsize(file_path)
     file_parts = []
@@ -140,20 +144,7 @@ async def handle_quality_selection(callback_query: CallbackQuery, state: FSMCont
     file_path = download_media(url, platform, quality=media_type if media_type != "mp3" else "360p", media_type=media_type)
     
     if file_path and os.path.exists(file_path):
-        mime_type, _ = mimetypes.guess_type(file_path)
-        
-        if mime_type and mime_type.startswith("audio"):
-            await callback_query.message.answer_audio(FSInputFile(file_path))
-        elif mime_type and mime_type.startswith("video"):
-            # Kichik video fayllarni yuborish
-            if os.path.getsize(file_path) <= 50 * 1024 * 1024:  # Agar fayl 50MB dan kichik bo'lsa
-                await callback_query.message.answer_video(FSInputFile(file_path))
-            else:
-                # Katta video faylni qismlarga bo'lib yuborish
-                await send_large_file(callback_query.message, file_path)
-        else:
-            await callback_query.message.reply("❌ Xato: Nomalum fayl formati.")
-        
+        await callback_query.message.answer_document(FSInputFile(file_path))
         os.remove(file_path)
     else:
         await callback_query.message.reply("❌ Xato: Fayl topilmadi.")

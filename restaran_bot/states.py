@@ -1,0 +1,20 @@
+from aiogram.fsm.state import State, StatesGroup
+
+class OrderState(StatesGroup):
+    waiting_for_phone = State()
+    waiting_for_gmail = State()
+    waiting_for_location = State()
+    order_menu = State()
+    choosing_place = State()
+    choosing_table = State()
+    buyurtma_menu = State()
+    choosing_salat = State()
+    choosing_fastfood = State()
+    choosing_first_food = State()
+    choosing_second_food = State()
+    choosing_drinks = State()
+    choosing_hot_drinks = State()
+    waiting_for_quantity = State()
+    waiting_for_litre = State()
+    choosing_payment = State()
+    showing_order_summary = State()
